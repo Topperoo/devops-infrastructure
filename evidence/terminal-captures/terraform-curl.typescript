@@ -1,0 +1,43 @@
+Script started on 2026-10-15 22:42:25+03:00 [COMMAND="/bin/bash /home/topperoo/Documents/Codex/2026-10-15/yfv-x20/work/terminal-capture/terraform-curl.sh" TERM="xterm" TTY="/dev/pts/3" COLUMNS="174" LINES="51"]
+Host: TopperooPC | 2026-10-15T22:42:25+03:00
+Directory: /home/topperoo/Documents/Codex/2026-10-15/yfv-x20/outputs/devops-infrastructure
+
+$ curl -sS -i --noproxy '*' --max-time 15 http://172.28.77.10:8080/
+HTTP/1.1 200 OK
+[1mServer[0m: nginx/1.28.0
+[1mDate[0m: Thu, 15 Oct 2026 19:42:25 GMT
+[1mContent-Type[0m: text/html
+[1mContent-Length[0m: 615
+[1mLast-Modified[0m: Wed, 23 Apr 2025 12:59:25 GMT
+[1mConnection[0m: keep-alive
+[1mETag[0m: "6808e42d-267"
+[1mAccept-Ranges[0m: bytes
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+$ status=0
+
+Exit status: 0
+
+Script done on 2026-10-15 22:42:25+03:00 [COMMAND_EXIT_CODE="0"]

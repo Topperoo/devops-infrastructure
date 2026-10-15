@@ -1,0 +1,13 @@
+Script started on 2026-10-15 22:42:22+03:00 [COMMAND="/bin/bash /home/topperoo/Documents/Codex/2026-10-15/yfv-x20/work/terminal-capture/compose-vm.sh" TERM="xterm" TTY="/dev/pts/3" COLUMNS="174" LINES="51"]
+Host: TopperooPC | 2026-10-15T22:42:22+03:00
+Directory: /home/topperoo/Documents/Codex/2026-10-15/yfv-x20/outputs/devops-infrastructure
+
+$ ssh -i /home/topperoo/Documents/Codex/2026-10-15/yfv-x20/outputs/devops-infrastructure/.local/id_ed25519 -o BatchMode=yes -o StrictHostKeyChecking=yes deployer@172.28.77.10 'docker compose -f /opt/app/docker-compose.yml ps'
+NAME          IMAGE                 COMMAND                  SERVICE   CREATED          STATUS                    PORTS
+app-app-1     nginx:1.28.0-alpine   "/docker-entrypoint.…"   app       24 minutes ago   Up 22 minutes (healthy)   80/tcp
+app-nginx-1   nginx:1.28.0-alpine   "/docker-entrypoint.…"   nginx     24 minutes ago   Up 22 minutes (healthy)   0.0.0.0:80->80/tcp, [::]:80->80/tcp
+$ status=0
+
+Exit status: 0
+
+Script done on 2026-10-15 22:42:22+03:00 [COMMAND_EXIT_CODE="0"]
