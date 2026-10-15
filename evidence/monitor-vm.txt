@@ -1,2 +1,2 @@
 Service docker: active
-Syslog error lines in the last hour: 145
+Syslog error lines in the last hour: 147

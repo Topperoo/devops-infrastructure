@@ -1,42 +1,23 @@
-variable "libvirt_uri" {
+variable "docker_host" {
   type    = string
-  default = "qemu:///system"
+  default = "unix:///var/run/docker.sock"
 }
 
-variable "name" {
+variable "ssh_private_key_path" {
   type    = string
-  default = "devops-homework"
-  validation {
-    condition     = can(regex("^[a-z][a-z0-9-]{0,30}$", var.name))
-    error_message = "Use a lowercase resource name, up to 31 characters."
-  }
+  default = "../.local/id_ed25519"
 }
 
-variable "network_cidr" {
+variable "bind_address" {
   type    = string
-  default = "172.28.77.0/24"
-  validation {
-    condition     = can(cidrhost(var.network_cidr, 10))
-    error_message = "Provide an IPv4 subnet containing at least 16 addresses."
-  }
+  default = "127.0.0.1"
 }
 
-variable "ssh_public_key_path" {
-  type    = string
-  default = "../.local/id_ed25519.pub"
-}
-
-variable "memory_mib" {
+variable "http_port" {
   type    = number
-  default = 1536
-}
-
-variable "vcpu" {
-  type    = number
-  default = 1
-}
-
-variable "image_path" {
-  type        = string
-  description = "Absolute path to the verified Ubuntu 22.04 cloud image."
+  default = 8080
+  validation {
+    condition     = var.http_port >= 1024 && var.http_port <= 65535 && floor(var.http_port) == var.http_port
+    error_message = "Use an integer port between 1024 and 65535."
+  }
 }

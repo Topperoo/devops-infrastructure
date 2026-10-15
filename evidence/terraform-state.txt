@@ -1,6 +1,4 @@
-libvirt_cloudinit_disk.bootstrap
-libvirt_domain.host
-libvirt_network.lab
-libvirt_pool.lab
-libvirt_volume.root
-libvirt_volume.ubuntu
+docker_container.nginx
+docker_image.nginx
+docker_network.nginx
+docker_volume.nginx

@@ -1,0 +1,78 @@
+[
+    {
+        "name": "terraform-nginx",
+        "networks": [
+            "terraform-nginx-net"
+        ],
+        "mounts": [
+            {
+                "Type": "volume",
+                "Name": "terraform-nginx-html",
+                "Source": "/var/lib/docker/volumes/terraform-nginx-html/_data",
+                "Destination": "/usr/share/nginx/html",
+                "Driver": "local",
+                "Mode": "z",
+                "RW": false,
+                "Propagation": ""
+            }
+        ],
+        "ports": {
+            "80/tcp": [
+                {
+                    "HostIp": "172.28.77.10",
+                    "HostPort": "8080"
+                }
+            ]
+        },
+        "health": "healthy"
+    },
+    {
+        "name": "app-app-1",
+        "networks": [
+            "app_app_net"
+        ],
+        "mounts": [
+            {
+                "Type": "bind",
+                "Source": "/opt/app/index.html",
+                "Destination": "/usr/share/nginx/html/index.html",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "ports": {
+            "80/tcp": null
+        },
+        "health": "healthy"
+    },
+    {
+        "name": "app-nginx-1",
+        "networks": [
+            "app_app_net"
+        ],
+        "mounts": [
+            {
+                "Type": "bind",
+                "Source": "/opt/app/nginx.conf",
+                "Destination": "/etc/nginx/conf.d/default.conf",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "ports": {
+            "80/tcp": [
+                {
+                    "HostIp": "0.0.0.0",
+                    "HostPort": "80"
+                },
+                {
+                    "HostIp": "::",
+                    "HostPort": "80"
+                }
+            ]
+        },
+        "health": "healthy"
+    }
+]

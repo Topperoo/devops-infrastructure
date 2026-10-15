@@ -1,5 +1,2 @@
-$ work/venv/bin/ansible-playbook --syntax-check -i outputs/devops-infrastructure/ansible/inventory.ini.example outputs/devops-infrastructure/ansible/setup_host.yml
 
-playbook: outputs/devops-infrastructure/ansible/setup_host.yml
-
-Exit code: 0
+playbook: ansible/setup_host.yml

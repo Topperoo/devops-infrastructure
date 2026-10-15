@@ -1,0 +1,12 @@
+libvirt_domain.host: Destroying... [id=f9164212-50d9-46d4-a140-07b2d0a547cf]
+libvirt_domain.host: Destruction complete after 1s
+libvirt_domain.host: Creating...
+libvirt_domain.host: Creation complete after 1s [id=238c6157-90b6-4c4d-bcdf-21359357453c]
+
+Apply complete! Resources: 1 added, 0 changed, 1 destroyed.
+
+Outputs:
+
+controller_ip = "172.28.77.1"
+vm_ip = "172.28.77.10"
+vm_name = "devops-homework"

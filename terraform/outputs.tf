@@ -1,11 +1,11 @@
-output "vm_ip" {
-  value = local.vm_ip
+output "nginx_url" {
+  value = "http://${var.bind_address}:${var.http_port}/"
 }
 
-output "controller_ip" {
-  value = local.controller_ip
+output "network_name" {
+  value = docker_network.nginx.name
 }
 
-output "vm_name" {
-  value = libvirt_domain.host.name
+output "volume_name" {
+  value = docker_volume.nginx.name
 }

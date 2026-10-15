@@ -1,82 +1,60 @@
-locals {
-  controller_ip = cidrhost(var.network_cidr, 1)
-  vm_ip         = cidrhost(var.network_cidr, 10)
-}
-
-resource "libvirt_network" "lab" {
-  name      = var.name
-  mode      = "nat"
-  addresses = [var.network_cidr]
-  autostart = true
-  dhcp {
-    enabled = true
-  }
-  dns {
-    enabled = true
-  }
-}
-
-resource "libvirt_pool" "lab" {
-  name = var.name
-  type = "dir"
-  path = "/var/lib/libvirt/images/${var.name}"
-}
-
-resource "libvirt_volume" "ubuntu" {
-  name   = "ubuntu-22.04-base.qcow2"
-  pool   = libvirt_pool.lab.name
-  source = var.image_path
-  format = "qcow2"
-}
-
-resource "libvirt_volume" "root" {
-  name           = "root.qcow2"
-  pool           = libvirt_pool.lab.name
-  base_volume_id = libvirt_volume.ubuntu.id
-  size           = 12 * 1024 * 1024 * 1024
-  format         = "qcow2"
-}
-
-resource "libvirt_cloudinit_disk" "bootstrap" {
-  name = "cloud-init.iso"
-  pool = libvirt_pool.lab.name
-  user_data = templatefile("${path.module}/cloud-init.yml.tftpl", {
-    hostname       = var.name
-    ssh_public_key = trimspace(file(pathexpand(var.ssh_public_key_path)))
-    controller_ip  = local.controller_ip
-  })
-  network_config = yamlencode({
-    version = 2
-    ethernets = {
-      primary = {
-        match = { macaddress = "52:54:00:77:00:10" }
-        dhcp4 = true
-      }
+terraform {
+  required_version = ">= 1.13, < 2.0"
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "4.6.0"
     }
-  })
+  }
 }
 
-resource "libvirt_domain" "host" {
-  name      = var.name
-  memory    = var.memory_mib
-  vcpu      = var.vcpu
-  cloudinit = libvirt_cloudinit_disk.bootstrap.id
-  autostart = false
-  disk {
-    volume_id = libvirt_volume.root.id
+provider "docker" {
+  host = var.docker_host
+  ssh_opts = [
+    "-i", pathexpand(var.ssh_private_key_path),
+    "-o", "StrictHostKeyChecking=yes",
+    "-o", "BatchMode=yes"
+  ]
+}
+
+resource "docker_network" "nginx" {
+  name = "terraform-nginx-net"
+}
+
+resource "docker_volume" "nginx" {
+  name = "terraform-nginx-html"
+}
+
+resource "docker_image" "nginx" {
+  name         = "nginx:1.28.0-alpine"
+  keep_locally = true
+}
+
+resource "docker_container" "nginx" {
+  name         = "terraform-nginx"
+  image        = docker_image.nginx.image_id
+  restart      = "unless-stopped"
+  network_mode = docker_network.nginx.name
+  wait         = true
+  wait_timeout = 60
+
+  ports {
+    internal = 80
+    external = var.http_port
+    ip       = var.bind_address
   }
-  network_interface {
-    network_id     = libvirt_network.lab.id
-    mac            = "52:54:00:77:00:10"
-    addresses      = [local.vm_ip]
-    wait_for_lease = true
+
+  mounts {
+    type      = "volume"
+    source    = docker_volume.nginx.name
+    target    = "/usr/share/nginx/html"
+    read_only = true
   }
-  xml {
-    xslt = file("${path.module}/disk-format.xsl")
-  }
-  console {
-    type        = "pty"
-    target_type = "serial"
-    target_port = "0"
+
+  healthcheck {
+    test     = ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+    interval = "5s"
+    timeout  = "3s"
+    retries  = 12
   }
 }

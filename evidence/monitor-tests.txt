@@ -6,6 +6,6 @@ test_recent_old_future_and_mixed_timestamps (test_monitor.MonitorTests.test_rece
 test_unreadable_path (test_monitor.MonitorTests.test_unreadable_path) ... ok
 
 ----------------------------------------------------------------------
-Ran 6 tests in 0.042s
+Ran 6 tests in 0.039s
 
 OK

@@ -1,0 +1,70 @@
+
+PLAY [Configure container host] ************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [devops-host]
+
+TASK [host : Create deployer] **************************************************
+ok: [devops-host]
+
+TASK [host : Create deployer SSH directory] ************************************
+ok: [devops-host]
+
+TASK [host : Install deployer public key] **************************************
+ok: [devops-host]
+
+TASK [host : Configure deployer sudo access] ***********************************
+ok: [devops-host]
+
+TASK [host : Install repository prerequisites] *********************************
+ok: [devops-host]
+
+TASK [host : Create apt key directory] *****************************************
+ok: [devops-host]
+
+TASK [host : Install Docker signing key] ***************************************
+ok: [devops-host]
+
+TASK [host : Configure Docker repository] **************************************
+ok: [devops-host]
+
+TASK [host : Install Docker Engine and Compose plugin] *************************
+ok: [devops-host]
+
+TASK [host : Enable Docker and syslog] *****************************************
+ok: [devops-host] => (item=docker)
+ok: [devops-host] => (item=rsyslog)
+
+TASK [host : Install monitoring utility] ***************************************
+ok: [devops-host]
+
+TASK [host : Allow deployer to manage Docker for Terraform over SSH] ***********
+changed: [devops-host]
+
+TASK [host : Configure homework firewall without removing Docker rules] ********
+changed: [devops-host]
+
+TASK [host : Apply pending host configuration] *********************************
+
+RUNNING HANDLER [host : Apply homework firewall] *******************************
+changed: [devops-host]
+
+TASK [app : Create application directory] **************************************
+ok: [devops-host]
+
+TASK [app : Copy application configuration] ************************************
+ok: [devops-host] => (item=docker-compose.yml)
+ok: [devops-host] => (item=nginx.conf)
+ok: [devops-host] => (item=index.html)
+
+TASK [app : Inspect running Compose services] **********************************
+ok: [devops-host]
+
+TASK [app : Reconcile application services] ************************************
+skipping: [devops-host]
+
+TASK [app : Verify reverse proxy response] *************************************
+ok: [devops-host]
+
+PLAY RECAP *********************************************************************
+devops-host                : ok=19   changed=3    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0

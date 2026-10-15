@@ -34,7 +34,7 @@
 
 - name: Install repository prerequisites
   ansible.builtin.apt:
-      name: [ca-certificates, curl, rsyslog]
+      name: [ca-certificates, curl, rsyslog, nftables]
       state: present
       update_cache: true
       cache_valid_time: 3600
@@ -76,3 +76,28 @@
       src: "{{ playbook_dir }}/../scripts/monitor.sh"
       dest: /usr/local/bin/monitor.sh
       mode: '0755'
+
+- name: Allow deployer to manage Docker for Terraform over SSH
+  ansible.builtin.user:
+      name: deployer
+      groups: docker
+      append: true
+
+- name: Configure homework firewall without removing Docker rules
+  ansible.builtin.template:
+      src: nftables.conf.j2
+      dest: /etc/nftables.conf
+      owner: root
+      group: root
+      mode: '0600'
+      validate: /usr/sbin/nft --check --file %s
+  notify: Apply homework firewall
+
+- name: Apply pending host configuration
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable the homework firewall at boot
+  ansible.builtin.systemd_service:
+      name: nftables
+      enabled: true
+      state: started

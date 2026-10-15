@@ -1,7 +1,9 @@
 Temporary external-interface test: source 172.29.88.2, target 172.29.88.1
 PASS: SSH blocked from unauthorized source
 curl: (28) Connection timeout after 2001 ms
-PASS: published Docker HTTP port blocked from unauthorized source
+PASS: published Docker HTTP port 80 blocked from unauthorized source
+curl: (28) Connection PASS: published Docker HTTP port 8080 blocked from unauthorized source
+timeout after 2001 ms
 172.29.88.1 dev hw-client lladdr f6:a6:8e:6e:13:0b REACHABLE
 table inet homework {
 	chain input {
@@ -9,7 +11,7 @@ table inet homework {
 		iifname "lo" accept
 		ct state established,related accept
 		udp sport 67 udp dport 68 accept
-		ip saddr 172.28.77.1 tcp dport { 22, 80 } accept
+		ip saddr 172.28.77.1 tcp dport { 22, 80, 8080 } accept
 		ip saddr 172.28.77.1 ip protocol icmp accept
 	}
 

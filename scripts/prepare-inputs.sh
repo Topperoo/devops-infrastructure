@@ -33,7 +33,7 @@ with image.open('rb') as stream:
     actual = hashlib.file_digest(stream, 'sha256').hexdigest()
 if actual != expected:
     raise SystemExit('Ubuntu image checksum mismatch; remove the image and retry.')
-variables = project / 'terraform/terraform.tfvars.json'
+variables = project / 'vm/terraform.tfvars.json'
 if not variables.exists():
     variables.write_text(json.dumps({'image_path': str(image)}, indent=4) + '\n')
 print(f'Image verified: {actual}')

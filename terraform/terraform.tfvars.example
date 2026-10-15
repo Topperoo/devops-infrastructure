@@ -1,3 +1,4 @@
-image_path = "/absolute/path/to/ubuntu-22.04-server-cloudimg-amd64.img"
-# ssh_public_key_path = "../.local/id_ed25519.pub"
-# network_cidr = "172.28.77.0/24"
+docker_host          = "ssh://deployer@172.28.77.10:22"
+ssh_private_key_path = "../.local/id_ed25519"
+bind_address         = "172.28.77.10"
+http_port            = 8080
