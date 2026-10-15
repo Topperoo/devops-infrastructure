@@ -1,0 +1,49 @@
+#cloud-config
+hostname: ${hostname}
+manage_etc_hosts: true
+disable_root: true
+ssh_pwauth: false
+users:
+    - name: ubuntu
+      groups: [sudo]
+      shell: /bin/bash
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      lock_passwd: true
+      ssh_authorized_keys:
+          - ${ssh_public_key}
+package_update: true
+packages:
+    - nftables
+    - rsyslog
+write_files:
+    - path: /etc/ssh/sshd_config.d/00-homework.conf
+      permissions: '0644'
+      content: |
+          PermitRootLogin no
+          PasswordAuthentication no
+          KbdInteractiveAuthentication no
+    - path: /etc/nftables.conf
+      permissions: '0600'
+      content: |
+          #!/usr/sbin/nft -f
+          flush ruleset
+          table inet homework {
+              chain input {
+                  type filter hook input priority -10; policy drop;
+                  iifname "lo" accept
+                  ct state established,related accept
+                  udp sport 67 udp dport 68 accept
+                  ip saddr ${controller_ip} tcp dport { 22, 80 } accept
+                  ip saddr ${controller_ip} ip protocol icmp accept
+              }
+              chain forward {
+                  type filter hook forward priority -10; policy accept;
+                  ct state established,related accept
+                  iifname "en*" ip saddr != ${controller_ip} drop
+                  iifname "eth*" ip saddr != ${controller_ip} drop
+              }
+          }
+runcmd:
+    - [systemctl, enable, --now, nftables]
+    - [systemctl, enable, --now, rsyslog]
+    - [systemctl, restart, ssh]

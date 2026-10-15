@@ -1,0 +1,11 @@
+test_empty_log (test_monitor.MonitorTests.test_empty_log) ... ok
+test_inactive_service_includes_journal (test_monitor.MonitorTests.test_inactive_service_includes_journal) ... ok
+test_invalid_arguments (test_monitor.MonitorTests.test_invalid_arguments) ... ok
+test_missing_service (test_monitor.MonitorTests.test_missing_service) ... ok
+test_recent_old_future_and_mixed_timestamps (test_monitor.MonitorTests.test_recent_old_future_and_mixed_timestamps) ... ok
+test_unreadable_path (test_monitor.MonitorTests.test_unreadable_path) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.042s
+
+OK

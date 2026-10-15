@@ -1,0 +1,4 @@
+Service apt-daily: inactive
+-- No entries --
+Syslog error lines in the last hour: 145
+Exit code: 1

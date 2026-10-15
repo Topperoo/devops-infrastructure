@@ -1,0 +1,40 @@
+---
+- name: Create application directory
+  ansible.builtin.file:
+      path: /opt/app
+      state: directory
+      owner: deployer
+      group: deployer
+      mode: '0755'
+
+- name: Copy application configuration
+  ansible.builtin.copy:
+      src: "{{ playbook_dir }}/../compose/{{ item }}"
+      dest: "/opt/app/{{ item }}"
+      owner: deployer
+      group: deployer
+      mode: '0644'
+  loop: [docker-compose.yml, nginx.conf, index.html]
+  register: app_files
+
+- name: Inspect running Compose services
+  ansible.builtin.command:
+      cmd: docker compose -f /opt/app/docker-compose.yml ps --services --status running
+  register: running_services
+  changed_when: false
+
+- name: Reconcile application services
+  ansible.builtin.command:
+      cmd: docker compose -f /opt/app/docker-compose.yml up -d --wait
+  when: app_files.changed or (running_services.stdout_lines | sort != ['app', 'nginx'])
+  changed_when: true
+
+- name: Verify reverse proxy response
+  ansible.builtin.uri:
+      url: http://127.0.0.1/
+      return_content: true
+      timeout: 5
+  register: app_response
+  until: app_response.status == 200 and 'Hello World' in app_response.content
+  retries: 6
+  delay: 3

@@ -1,0 +1,59 @@
+
+PLAY [Configure container host] ************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [devops-host]
+
+TASK [host : Create deployer] **************************************************
+changed: [devops-host]
+
+TASK [host : Create deployer SSH directory] ************************************
+changed: [devops-host]
+
+TASK [host : Install deployer public key] **************************************
+changed: [devops-host]
+
+TASK [host : Configure deployer sudo access] ***********************************
+changed: [devops-host]
+
+TASK [host : Install repository prerequisites] *********************************
+ok: [devops-host]
+
+TASK [host : Create apt key directory] *****************************************
+ok: [devops-host]
+
+TASK [host : Install Docker signing key] ***************************************
+changed: [devops-host]
+
+TASK [host : Configure Docker repository] **************************************
+changed: [devops-host]
+
+TASK [host : Install Docker Engine and Compose plugin] *************************
+changed: [devops-host]
+
+TASK [host : Enable Docker and syslog] *****************************************
+ok: [devops-host] => (item=docker)
+ok: [devops-host] => (item=rsyslog)
+
+TASK [host : Install monitoring utility] ***************************************
+changed: [devops-host]
+
+TASK [app : Create application directory] **************************************
+changed: [devops-host]
+
+TASK [app : Copy application configuration] ************************************
+changed: [devops-host] => (item=docker-compose.yml)
+changed: [devops-host] => (item=nginx.conf)
+changed: [devops-host] => (item=index.html)
+
+TASK [app : Inspect running Compose services] **********************************
+ok: [devops-host]
+
+TASK [app : Reconcile application services] ************************************
+changed: [devops-host]
+
+TASK [app : Verify reverse proxy response] *************************************
+ok: [devops-host]
+
+PLAY RECAP *********************************************************************
+devops-host                : ok=17   changed=11   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0

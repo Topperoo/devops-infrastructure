@@ -1,0 +1,7 @@
+---
+- name: Configure container host
+  hosts: app_hosts
+  become: true
+  roles:
+      - host
+      - app
