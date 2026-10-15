@@ -1,0 +1,19 @@
+libvirt_network.lab: Refreshing state... [id=c824e59e-41c2-43f3-a443-61c7e6291f15]
+libvirt_pool.lab: Refreshing state... [id=8f6b6f9c-1f6b-447b-87fa-a62fb63f6c18]
+libvirt_volume.ubuntu: Refreshing state... [id=/var/lib/libvirt/images/devops-homework/ubuntu-22.04-base.qcow2]
+libvirt_cloudinit_disk.bootstrap: Refreshing state... [id=/var/lib/libvirt/images/devops-homework/cloud-init.iso;04e074b7-3d2b-4619-8752-17c89e96c9d7]
+libvirt_volume.root: Refreshing state... [id=/var/lib/libvirt/images/devops-homework/root.qcow2]
+libvirt_domain.host: Refreshing state... [id=238c6157-90b6-4c4d-bcdf-21359357453c]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
+
+Warning: Argument is deprecated
+
+  with libvirt_pool.lab,
+  on main.tf line 22, in resource "libvirt_pool" "lab":
+  22:   path = "/var/lib/libvirt/images/${var.name}"
+
+use target.path instead

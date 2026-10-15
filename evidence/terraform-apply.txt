@@ -1,12 +1,16 @@
-libvirt_domain.host: Destroying... [id=f9164212-50d9-46d4-a140-07b2d0a547cf]
-libvirt_domain.host: Destruction complete after 1s
-libvirt_domain.host: Creating...
-libvirt_domain.host: Creation complete after 1s [id=238c6157-90b6-4c4d-bcdf-21359357453c]
+docker_volume.nginx: Creating...
+docker_network.nginx: Creating...
+docker_image.nginx: Creating...
+docker_volume.nginx: Creation complete after 2s [id=terraform-nginx-html]
+docker_image.nginx: Creation complete after 2s [id=sha256:30f1c0d78e0ad60901648be663a710bdadf19e4c10ac6782c235200619158284nginx:1.28.0-alpine]
+docker_network.nginx: Creation complete after 4s [id=2e52ab1e79cf366b3123f81d21bcbd23a71ba3bc673891161015f00c1e7cc221]
+docker_container.nginx: Creating...
+docker_container.nginx: Creation complete after 6s [id=8990cd248bb355fee79398edeeca8ab6fb10a5a43b80956e6ec122e1dea8b157]
 
-Apply complete! Resources: 1 added, 0 changed, 1 destroyed.
+Apply complete! Resources: 4 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-controller_ip = "172.28.77.1"
-vm_ip = "172.28.77.10"
-vm_name = "devops-homework"
+network_name = "terraform-nginx-net"
+nginx_url = "http://172.28.77.10:8080/"
+volume_name = "terraform-nginx-html"

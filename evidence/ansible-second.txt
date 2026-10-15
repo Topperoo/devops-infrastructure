@@ -38,6 +38,17 @@ ok: [devops-host] => (item=rsyslog)
 TASK [host : Install monitoring utility] ***************************************
 ok: [devops-host]
 
+TASK [host : Allow deployer to manage Docker for Terraform over SSH] ***********
+ok: [devops-host]
+
+TASK [host : Configure homework firewall without removing Docker rules] ********
+ok: [devops-host]
+
+TASK [host : Apply pending host configuration] *********************************
+
+TASK [host : Enable the homework firewall at boot] *****************************
+ok: [devops-host]
+
 TASK [app : Create application directory] **************************************
 ok: [devops-host]
 
@@ -56,4 +67,4 @@ TASK [app : Verify reverse proxy response] *************************************
 ok: [devops-host]
 
 PLAY RECAP *********************************************************************
-devops-host                : ok=16   changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+devops-host                : ok=19   changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0

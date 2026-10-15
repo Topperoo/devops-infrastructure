@@ -1,0 +1,19 @@
+#!/usr/sbin/nft -f
+add table inet homework
+flush table inet homework
+table inet homework {
+    chain input {
+        type filter hook input priority -10; policy drop;
+        iifname "lo" accept
+        ct state established,related accept
+        udp sport 67 udp dport 68 accept
+        ip saddr {{ controller_ip }} tcp dport { 22, 80, {{ terraform_nginx_port }} } accept
+        ip saddr {{ controller_ip }} ip protocol icmp accept
+    }
+    chain forward {
+        type filter hook forward priority -10; policy accept;
+        ct state established,related accept
+        iifname "en*" ip saddr != {{ controller_ip }} drop
+        iifname "eth*" ip saddr != {{ controller_ip }} drop
+    }
+}

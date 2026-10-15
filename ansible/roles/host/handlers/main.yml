@@ -1,0 +1,5 @@
+---
+- name: Apply homework firewall
+  ansible.builtin.command:
+      cmd: nft --file /etc/nftables.conf
+  changed_when: true

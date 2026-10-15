@@ -30,14 +30,16 @@ if ip netns exec "$namespace" nc -z -w 2 172.29.88.1 22; then
     exit 1
 fi
 echo 'PASS: SSH blocked from unauthorized source'
-set +e
-ip netns exec "$namespace" curl --silent --show-error --noproxy '*' --connect-timeout 2 --max-time 3 http://172.29.88.1/
-status=$?
-set -e
-if [[ $status -ne 28 ]]; then
-    echo "FAIL: expected HTTP connection timeout, got $status"
-    exit 1
-fi
-echo 'PASS: published Docker HTTP port blocked from unauthorized source'
+for port in 80 8080; do
+    set +e
+    ip netns exec "$namespace" curl --silent --show-error --noproxy '*' --connect-timeout 2 --max-time 3 "http://172.29.88.1:$port/"
+    status=$?
+    set -e
+    if [[ $status -ne 28 ]]; then
+        echo "FAIL: expected HTTP connection timeout on port $port, got $status"
+        exit 1
+    fi
+    echo "PASS: published Docker HTTP port $port blocked from unauthorized source"
+done
 ip netns exec "$namespace" ip neigh show 172.29.88.1 | grep lladdr
 nft list table inet homework
