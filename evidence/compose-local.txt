@@ -1,0 +1,6 @@
+$ docker compose -p devops-homework-check -f work/compose-check/docker-compose.yml ps
+NAME                            IMAGE                 COMMAND                  SERVICE   CREATED         STATUS                     PORTS
+devops-homework-check-app-1     nginx:1.28.0-alpine   "/docker-entrypoint.…"   app       2 minutes ago   Up 2 minutes (healthy)     80/tcp
+devops-homework-check-nginx-1   nginx:1.28.0-alpine   "/docker-entrypoint.…"   nginx     2 minutes ago   Up 2 minutes (unhealthy)   127.0.0.1:18080->80/tcp
+
+Exit code: 0

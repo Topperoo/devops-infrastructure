@@ -1,0 +1,2 @@
+Service snap.docker.dockerd: active
+Syslog error lines in the last hour: 279

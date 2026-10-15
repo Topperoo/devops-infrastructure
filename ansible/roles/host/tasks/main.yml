@@ -1,0 +1,78 @@
+---
+- name: Create deployer
+  ansible.builtin.user:
+      name: deployer
+      shell: /bin/bash
+      groups: sudo
+      append: true
+      password_lock: true
+
+- name: Create deployer SSH directory
+  ansible.builtin.file:
+      path: /home/deployer/.ssh
+      state: directory
+      owner: deployer
+      group: deployer
+      mode: '0700'
+
+- name: Install deployer public key
+  ansible.builtin.copy:
+      content: "{{ lookup('file', playbook_dir + '/../.local/id_ed25519.pub') | trim }}\n"
+      dest: /home/deployer/.ssh/authorized_keys
+      owner: deployer
+      group: deployer
+      mode: '0600'
+
+- name: Configure deployer sudo access
+  ansible.builtin.copy:
+      content: "deployer ALL=(ALL) NOPASSWD:ALL\n"
+      dest: /etc/sudoers.d/deployer
+      owner: root
+      group: root
+      mode: '0440'
+      validate: /usr/sbin/visudo -cf %s
+
+- name: Install repository prerequisites
+  ansible.builtin.apt:
+      name: [ca-certificates, curl, rsyslog]
+      state: present
+      update_cache: true
+      cache_valid_time: 3600
+
+- name: Create apt key directory
+  ansible.builtin.file:
+      path: /etc/apt/keyrings
+      state: directory
+      mode: '0755'
+
+- name: Install Docker signing key
+  ansible.builtin.get_url:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      dest: /etc/apt/keyrings/docker.asc
+      mode: '0644'
+
+- name: Configure Docker repository
+  ansible.builtin.copy:
+      content: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu jammy stable\n"
+      dest: /etc/apt/sources.list.d/docker.list
+      mode: '0644'
+  register: docker_repository
+
+- name: Install Docker Engine and Compose plugin
+  ansible.builtin.apt:
+      name: [docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose-plugin]
+      state: present
+      update_cache: "{{ docker_repository.changed }}"
+
+- name: Enable Docker and syslog
+  ansible.builtin.systemd_service:
+      name: "{{ item }}"
+      enabled: true
+      state: started
+  loop: [docker, rsyslog]
+
+- name: Install monitoring utility
+  ansible.builtin.copy:
+      src: "{{ playbook_dir }}/../scripts/monitor.sh"
+      dest: /usr/local/bin/monitor.sh
+      mode: '0755'
