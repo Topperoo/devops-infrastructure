@@ -2,17 +2,19 @@
 
 Локальная Ubuntu 22.04 VM: Terraform создаёт сеть, диски и машину; Ansible настраивает Docker и пользователя `deployer`; nginx проксирует запросы к контейнеру `app` со страницей Hello World.
 
-**Статус:** код подготовлен, Terraform validate, Ansible syntax-check и тесты мониторинга пройдены. Реальное создание VM и второй запуск Ansible ещё не выполнены: на контроллере требуется установка KVM/libvirt с правами администратора. Подтверждение полного выполнения появится в `evidence/` после развёртывания.
+**Статус:** стенд развёрнут и проверен. Terraform управляет шестью ресурсами; повторный plan — `No changes`. Второй запуск Ansible: `changed=0 failed=0 unreachable=0`. Оба контейнера healthy, HTTP возвращает Hello World. Фактические результаты находятся в `evidence/`.
 
 ## Архитектура
 
 ```mermaid
 flowchart LR
-    Host[Основная Ubuntu: Terraform и Ansible] -->|SSH 22| VM[Ubuntu 22.04 VM: 172.28.77.10]
-    Host -->|HTTP 80| Proxy[nginx reverse proxy]
-    subgraph VMEnv[Виртуальная машина]
-        Proxy -->|app_net:80| App[app: nginx + Hello World]
+    Host[Контроллер: Terraform и Ansible]
+    subgraph VM[Ubuntu 22.04 VM: 172.28.77.10]
+        SSH[SSH и настройка хоста]
+        Proxy[nginx reverse proxy] -->|app_net:80| App[app: Hello World]
     end
+    Host -->|SSH 22| SSH
+    Host -->|HTTP 80| Proxy
 ```
 
 - KVM/libvirt, NAT-сеть `172.28.77.0/24`, адрес контроллера `172.28.77.1`.
@@ -54,7 +56,7 @@ evidence/        фактические результаты проверок
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y qemu-kvm libvirt-daemon-system libvirt-clients dnsmasq-base genisoimage python3-venv
+sudo apt-get install -y qemu-kvm libvirt-daemon-system libvirt-clients dnsmasq-base genisoimage xsltproc python3-venv
 sudo usermod -aG libvirt,kvm "$USER"
 ```
 
@@ -112,7 +114,7 @@ python3 -m unittest discover -s tests -v
 
 Подтверждённые локальные проверки перечислены в [evidence/STATUS.md](evidence/STATUS.md). Локальный тест Compose использует временный порт `127.0.0.1:18080`, чтобы не занимать HTTP-порт рабочей машины; это не заменяет проверку на VM.
 
-После развёртывания добавьте в README реальные скриншоты:
+Команды, результаты которых нужно показать при сдаче:
 
 1. `terraform -chdir=terraform state list`.
 2. Второй запуск Ansible с `changed=0`.
@@ -120,11 +122,40 @@ python3 -m unittest discover -s tests -v
 4. `sudo docker compose -f /opt/app/docker-compose.yml ps` внутри VM.
 5. `curl http://172.28.77.10/` на контроллере.
 
-Текстовые результаты собираются в `evidence/`. До появления этих результатов работа не считается полностью выполненной. Для проверки firewall нужен также отрицательный тест с другого источника; ограничение по конфигурации само по себе не является результатом такого теста.
+Текстовые результаты собраны в `evidence/`. Отрицательный тест из временного network namespace внутри VM подтвердил блокировку SSH и HTTP при источнике `172.29.88.2` через тестовый внешний интерфейс `ens-hwtest`. Его ARP-сосед был REACHABLE, поэтому тайм-аут не объясняется отсутствием L2-связности. После теста namespace и интерфейс удалены. Это проверка правил гостя на смоделированном внешнем интерфейсе, а не тест из интернета.
+
+Повторить отрицательный тест внутри гостя:
+
+```bash
+ssh -i .local/id_ed25519 deployer@172.28.77.10 'sudo bash -s' < tests/check-firewall.sh
+```
+
+## Изображения результатов
+
+Ниже — скриншоты страниц, отображающих фактический сохранённый вывод команд. Это оформленные представления логов, а не снимки окна терминала; полные исходные результаты доступны рядом в `.txt`. Для Ansible показан конец второго запуска.
+
+![Terraform state](evidence/images/terraform-state.png)
+
+![Ansible: changed=0](evidence/images/ansible-second.png)
+
+![Мониторинг Docker](evidence/images/monitor-vm.png)
+
+![Docker Compose](evidence/images/compose-vm.png)
+
+![Hello World через curl](evidence/images/curl-vm.png)
+
+## Возникшие проблемы и решения
+
+- AppArmor блокировал чтение backing image при подключении диска как libvirt volume. Отключение AppArmor не потребовалось: `terraform/disk-format.xsl` преобразует XML подключения в `type=file` с явным путём; формат qcow2 сохраняется от volume. Terraform продолжает управлять самим volume, поэтому после refresh нет постоянной разницы file/volume_id. Для XSLT нужен `xsltproc`.
+- Прямое указание `disk.file` в провайдере 0.8.3 давало формат raw и постоянную разницу при refresh. Поэтому оставлено `volume_id` с преобразованием XML. Путь в XSLT соответствует каталогу пула `/var/lib/libvirt/images/<pool>/<volume>`.
+- Первый тест на Docker Snap контроллера выявил тайм-аут между контейнерами. На VM с Docker Engine из официального репозитория связка работает; firewall контроллера для обхода проблемы не изменялся.
+- При параллельной первой загрузке одинакового образа containerd записал сообщения о временной блокировке слоёв. Загрузка завершилась, оба контейнера healthy. Монитор честно учитывает эти строки в часовом окне, даже когда текущий статус Docker — active.
+- В основной системе до работы уже была ошибка сборки openvpn-dco для нового ядра. KVM/libvirt установились; ядро и VPN не исправлялись в рамках ДЗ.
+- Закреплённый провайдер 0.8.3 предупреждает об устаревшем `libvirt_pool.path`; параметр работает, повторный plan не содержит изменений.
 
 ## Git workflow
 
-Рабочая ветка — `feature/infra-setup`, целевая — `main`. После проверки создаётся PR, проводится само-ревью. После завершения проверок и слияния:
+Реализация выполнена в `feature/infra-setup`, целевая ветка — `main`. [PR #1](https://github.com/Topperoo/devops-infrastructure/pull/1) содержит результаты проверок и само-ревью. Версия после слияния — `v0.1.0`. Команды для тегирования:
 
 ```bash
 git switch main

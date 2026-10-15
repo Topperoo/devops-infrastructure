@@ -28,3 +28,13 @@
       cmd: docker compose -f /opt/app/docker-compose.yml up -d --wait
   when: app_files.changed or (running_services.stdout_lines | sort != ['app', 'nginx'])
   changed_when: true
+
+- name: Verify reverse proxy response
+  ansible.builtin.uri:
+      url: http://127.0.0.1/
+      return_content: true
+      timeout: 5
+  register: app_response
+  until: app_response.status == 200 and 'Hello World' in app_response.content
+  retries: 6
+  delay: 3

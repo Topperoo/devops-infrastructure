@@ -1,4 +1,3 @@
-$ python3 -m unittest discover -s outputs/devops-infrastructure/tests -v
 test_empty_log (test_monitor.MonitorTests.test_empty_log) ... ok
 test_inactive_service_includes_journal (test_monitor.MonitorTests.test_inactive_service_includes_journal) ... ok
 test_invalid_arguments (test_monitor.MonitorTests.test_invalid_arguments) ... ok
@@ -7,8 +6,6 @@ test_recent_old_future_and_mixed_timestamps (test_monitor.MonitorTests.test_rece
 test_unreadable_path (test_monitor.MonitorTests.test_unreadable_path) ... ok
 
 ----------------------------------------------------------------------
-Ran 6 tests in 0.044s
+Ran 6 tests in 0.042s
 
 OK
-
-Exit code: 0

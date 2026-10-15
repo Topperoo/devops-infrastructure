@@ -71,6 +71,9 @@ resource "libvirt_domain" "host" {
     addresses      = [local.vm_ip]
     wait_for_lease = true
   }
+  xml {
+    xslt = file("${path.module}/disk-format.xsl")
+  }
   console {
     type        = "pty"
     target_type = "serial"
