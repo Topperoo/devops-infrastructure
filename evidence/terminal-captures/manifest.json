@@ -1,0 +1,54 @@
+{
+    "method": "Live xterm windows in a dedicated Xvfb display, decorated by TWM; direct ImageMagick import root-window screenshots; no image compositing or text rendering.",
+    "timezone": "Europe/Moscow",
+    "captures": [
+        {
+            "image": "evidence/images/terraform-state.png",
+            "command": "terraform -chdir=terraform state list",
+            "exit_code": 0,
+            "captured_at": "2026-10-15T22:42:08.362651+03:00",
+            "sha256": "c85960ded96f1faabd10c9567e2f2457d85f2c465ce7ee5ebfb8941f48fcd4aa",
+            "recording": "evidence/terminal-captures/terraform-state.typescript"
+        },
+        {
+            "image": "evidence/images/ansible-second.png",
+            "command": "ansible-playbook setup_host.yml",
+            "exit_code": 0,
+            "captured_at": "2026-10-15T22:42:20.607516+03:00",
+            "sha256": "8a5132d32fde3381becf8c1a7d2cf8a22d2b98e7a9d735cb1418feece75ee84d",
+            "recording": "evidence/terminal-captures/ansible-second.typescript"
+        },
+        {
+            "image": "evidence/images/monitor-vm.png",
+            "command": "ssh -i /home/topperoo/Documents/Codex/2026-10-15/yfv-x20/outputs/devops-infrastructure/.local/id_ed25519 -o BatchMode=yes -o StrictHostKeyChecking=yes deployer@172.28.77.10 'sudo /usr/local/bin/monitor.sh docker'",
+            "exit_code": 0,
+            "captured_at": "2026-10-15T22:42:22.213600+03:00",
+            "sha256": "e646409e169f33cafb0395be8540679e01a6e21310bb8a3d3cece5f79484fc3b",
+            "recording": "evidence/terminal-captures/monitor-vm.typescript"
+        },
+        {
+            "image": "evidence/images/compose-vm.png",
+            "command": "ssh -i /home/topperoo/Documents/Codex/2026-10-15/yfv-x20/outputs/devops-infrastructure/.local/id_ed25519 -o BatchMode=yes -o StrictHostKeyChecking=yes deployer@172.28.77.10 'docker compose -f /opt/app/docker-compose.yml ps'",
+            "exit_code": 0,
+            "captured_at": "2026-10-15T22:42:23.628700+03:00",
+            "sha256": "7469a7ccee7daab5a15ba62c1259bd6521891752ca6e0a0e92f064524803b109",
+            "recording": "evidence/terminal-captures/compose-vm.typescript"
+        },
+        {
+            "image": "evidence/images/curl-vm.png",
+            "command": "curl -sS -i --noproxy '*' --max-time 15 http://172.28.77.10/",
+            "exit_code": 0,
+            "captured_at": "2026-10-15T22:42:24.862416+03:00",
+            "sha256": "dbe7f06aec674314132e38829b397ac60bb3cb64dc00fc46b2474522dccc5f37",
+            "recording": "evidence/terminal-captures/curl-vm.typescript"
+        },
+        {
+            "image": "evidence/images/terraform-curl.png",
+            "command": "curl -sS -i --noproxy '*' --max-time 15 http://172.28.77.10:8080/",
+            "exit_code": 0,
+            "captured_at": "2026-10-15T22:42:26.099945+03:00",
+            "sha256": "339a4a3d76587378d65c886773ab15ea520d0dfb9fae9e89f039a148820c22e8",
+            "recording": "evidence/terminal-captures/terraform-curl.typescript"
+        }
+    ]
+}

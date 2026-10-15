@@ -124,7 +124,7 @@ ssh -i .local/id_ed25519 deployer@172.28.77.10 'sudo bash -s' < tests/check-fire
 
 Отрицательный тест создаёт временный network namespace внутри гостя с адресом `172.29.88.2` и интерфейсом `ens-hwtest`. Он проверяет запрет SSH, HTTP 80 и HTTP 8080 от другого источника, затем удаляет namespace и интерфейс. Это тест правил гостя на смоделированном внешнем интерфейсе, а не тест из интернета.
 
-Результаты: [evidence/STATUS.md](evidence/STATUS.md). Ниже — скриншоты страниц с фактическим сохранённым выводом команд; это оформленные логи, а не снимки GUI-терминала. Полные `.txt` и JSON доступны рядом.
+Результаты: [evidence/STATUS.md](evidence/STATUS.md). Ниже — настоящие снимки окон xterm. Команды повторно выполнены в отдельном виртуальном X-экране; изображения получены прямым захватом экрана без композиции и отрисовки текста из логов. Полные `.txt` и JSON доступны рядом; записи терминальных сессий и manifest с командами, временем и SHA-256 снимков находятся в `evidence/terminal-captures/`.
 
 ![Terraform: Docker-ресурсы](evidence/images/terraform-state.png)
 
@@ -135,6 +135,8 @@ ssh -i .local/id_ed25519 deployer@172.28.77.10 'sudo bash -s' < tests/check-fire
 ![Мониторинг Docker](evidence/images/monitor-vm.png)
 
 ![Отдельное Compose-окружение](evidence/images/compose-vm.png)
+
+![Compose: HTTP 200 и Hello World](evidence/images/curl-vm.png)
 
 ## Bash-мониторинг
 
